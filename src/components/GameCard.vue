@@ -1,5 +1,5 @@
 <template>
-  <q-card flat bordered class="game-card">
+  <q-card flat bordered :class="['game-card', { 'game-card--pinned': pinned }]">
     <q-card-section class="row items-center no-wrap q-pa-md">
       <!-- Away team -->
       <div
@@ -83,6 +83,7 @@ import { useTeams } from '../composables/useTeams'
 const props = defineProps<{
   game: SanitizedGame
   dateLabel?: string
+  pinned?: boolean
 }>()
 
 const { isFavorite, toggleFavorite } = useFavorites()
@@ -139,6 +140,20 @@ const statusColor = computed(() => {
 .game-card {
   max-width: 340px;
   width: 100%;
+}
+.game-card--pinned {
+  max-width: 420px;
+}
+.game-card--pinned .team-logo {
+  width: 64px;
+  height: 64px;
+}
+.game-card--pinned .team-name {
+  font-size: 1rem;
+}
+.game-card--pinned .status-badge {
+  font-size: 1rem;
+  padding: 6px 16px;
 }
 .team-col {
   min-width: 80px;

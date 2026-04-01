@@ -1,52 +1,56 @@
 <template>
   <div>
-    <div class="q-gutter-lg">
-      <div v-for="teamId in favorites" :key="teamId" class="favorite-team-section">
-        <div class="row items-center q-mb-sm q-gutter-sm">
-          <img :src="teamLogoUrl(teamId)" class="fav-team-logo" />
-          <span class="text-subtitle1 text-weight-bold">
-            {{ getTeam(teamId)?.name ?? `Team ${teamId}` }}
-          </span>
-          <q-btn
-            flat round dense
-            icon="star"
-            color="amber"
-            size="sm"
-            @click="toggleFavorite(teamId)"
-          />
-        </div>
-
-        <div v-if="teamLoading[teamId]" class="text-center q-pa-sm">
-          <q-spinner size="2em" />
-        </div>
-        <div v-else-if="teamGames[teamId]?.length">
-          <GameCard
-            :game="teamGames[teamId][0]"
-            :date-label="relativeDate(teamGames[teamId][0].officialDate)"
-          />
-        </div>
-        <div v-else class="text-grey-8 q-pa-md">
-          No upcoming games found.
-        </div>
-        <q-separator v-if="favorites.indexOf(teamId) < favorites.length - 1" class="q-mt-md" />
+    <div v-if="anyLoading" class="text-center q-pa-sm">
+      <q-spinner size="2em" />
+    </div>
+    <div v-else class="row justify-center q-gutter-md">
+      <GameCard
+        v-for="game in pinnedGames"
+        :key="game.gamePk"
+        :game="game"
+        :date-label="relativeDate(game.officialDate)"
+        pinned
+      />
+      <div
+        v-if="pinnedGames.length === 0 && favorites.length > 0"
+        class="text-grey-8 q-pa-md text-center"
+      >
+        No upcoming games found.
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import type { SanitizedGame } from '../api/types'
-import { fetchTeamSchedule, teamLogoUrl } from '../api/mlb'
+import { fetchTeamSchedule } from '../api/mlb'
 import { useFavorites } from '../composables/useFavorites'
-import { useTeams } from '../composables/useTeams'
 import GameCard from './GameCard.vue'
 
-const { favorites, toggleFavorite } = useFavorites()
-const { getTeam } = useTeams()
+const { favorites } = useFavorites()
 
 const teamGames = ref<Record<number, SanitizedGame[]>>({})
 const teamLoading = ref<Record<number, boolean>>({})
+
+const anyLoading = computed(() =>
+  favorites.value.some((id) => teamLoading.value[id]),
+)
+
+const pinnedGames = computed(() => {
+  const games: SanitizedGame[] = []
+  const seen = new Set<number>()
+  for (const teamId of favorites.value) {
+    const list = teamGames.value[teamId] ?? []
+    for (const g of list) {
+      if (!seen.has(g.gamePk)) {
+        seen.add(g.gamePk)
+        games.push(g)
+      }
+    }
+  }
+  return games
+})
 
 function relativeDate(officialDate: string): string {
   const today = new Date()
@@ -88,7 +92,6 @@ async function loadTeamGames(teamId: number) {
       formatDate(end),
     )
 
-    // Today's game takes priority; otherwise show the next future game
     const todayGame = allGames.find((g) => g.officialDate === todayStr)
     if (todayGame) {
       teamGames.value[teamId] = [todayGame]
@@ -112,13 +115,3 @@ async function loadAll() {
 watch(favorites, loadAll, { deep: true })
 onMounted(loadAll)
 </script>
-
-<style scoped>
-.fav-team-logo {
-  width: 32px;
-  height: 32px;
-}
-.current-game {
-  transform: scale(1.02);
-}
-</style>
