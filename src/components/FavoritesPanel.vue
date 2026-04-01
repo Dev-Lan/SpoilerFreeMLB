@@ -20,10 +20,10 @@
           <q-spinner size="2em" />
         </div>
         <div v-else-if="teamGames[teamId]?.length">
-          <GameCard :game="teamGames[teamId][0]" />
-          <div class="text-center text-caption text-grey-8 q-mt-xs">
-            {{ relativeDate(teamGames[teamId][0].officialDate) }}
-          </div>
+          <GameCard
+            :game="teamGames[teamId][0]"
+            :date-label="relativeDate(teamGames[teamId][0].officialDate)"
+          />
         </div>
         <div v-else class="text-grey-8 q-pa-md">
           No upcoming games found.

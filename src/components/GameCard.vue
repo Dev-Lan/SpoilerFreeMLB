@@ -1,5 +1,15 @@
 <template>
-  <q-card flat bordered class="game-card">
+  <q-card flat bordered class="game-card" style="position: relative;">
+    <q-chip
+      v-if="dateLabel"
+      dense
+      size="sm"
+      color="grey-3"
+      text-color="dark"
+      class="date-chip"
+    >
+      {{ dateLabel }}
+    </q-chip>
     <q-card-section class="row items-center no-wrap q-pa-md">
       <!-- Away team -->
       <div class="col team-col text-center">
@@ -72,7 +82,10 @@ import { teamLogoUrl } from '../api/mlb'
 import { useFavorites } from '../composables/useFavorites'
 import { useTeams } from '../composables/useTeams'
 
-const props = defineProps<{ game: SanitizedGame }>()
+const props = defineProps<{
+  game: SanitizedGame
+  dateLabel?: string
+}>()
 
 const { isFavorite, toggleFavorite } = useFavorites()
 const { getTeam } = useTeams()
@@ -117,6 +130,12 @@ const statusColor = computed(() => {
 .game-card {
   max-width: 340px;
   width: 100%;
+}
+.date-chip {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
 }
 .team-logo {
   width: 48px;
