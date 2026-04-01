@@ -12,17 +12,18 @@
     </q-chip>
     <q-card-section class="row items-center no-wrap q-pa-md">
       <!-- Away team -->
-      <div class="col team-col text-center">
-        <q-btn
-          flat
-          round
-          dense
-          :icon="isFavorite(game.teams.away.id) ? 'star' : 'star_border'"
-          :color="isFavorite(game.teams.away.id) ? 'amber' : 'grey-7'"
-          size="xs"
-          class="q-mb-xs"
-          @click.stop="toggleFavorite(game.teams.away.id)"
-        />
+      <div
+        class="col team-col text-center"
+        @mouseenter="hoverAway = true"
+        @mouseleave="hoverAway = false"
+        @click.stop="toggleFavorite(game.teams.away.id)"
+      >
+        <div class="star-wrapper" :class="starClasses(game.teams.away.id, hoverAway)">
+          <q-icon
+            :name="isFavorite(game.teams.away.id) ? 'star' : 'star_border'"
+            :color="isFavorite(game.teams.away.id) ? 'amber' : 'grey-7'"
+          />
+        </div>
         <div>
           <img
             :src="teamLogoUrl(game.teams.away.id)"
@@ -45,17 +46,18 @@
       </div>
 
       <!-- Home team -->
-      <div class="col team-col text-center">
-        <q-btn
-          flat
-          round
-          dense
-          :icon="isFavorite(game.teams.home.id) ? 'star' : 'star_border'"
-          :color="isFavorite(game.teams.home.id) ? 'amber' : 'grey-7'"
-          size="xs"
-          class="q-mb-xs"
-          @click.stop="toggleFavorite(game.teams.home.id)"
-        />
+      <div
+        class="col team-col text-center"
+        @mouseenter="hoverHome = true"
+        @mouseleave="hoverHome = false"
+        @click.stop="toggleFavorite(game.teams.home.id)"
+      >
+        <div class="star-wrapper" :class="starClasses(game.teams.home.id, hoverHome)">
+          <q-icon
+            :name="isFavorite(game.teams.home.id) ? 'star' : 'star_border'"
+            :color="isFavorite(game.teams.home.id) ? 'amber' : 'grey-7'"
+          />
+        </div>
         <div>
           <img
             :src="teamLogoUrl(game.teams.home.id)"
@@ -76,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { SanitizedGame } from '../api/types'
 import { teamLogoUrl } from '../api/mlb'
 import { useFavorites } from '../composables/useFavorites'
@@ -89,6 +91,17 @@ const props = defineProps<{
 
 const { isFavorite, toggleFavorite } = useFavorites()
 const { getTeam } = useTeams()
+
+const hoverAway = ref(false)
+const hoverHome = ref(false)
+
+function starClasses(teamId: number, hovering: boolean) {
+  const fav = isFavorite(teamId)
+  return {
+    'star-visible': fav || hovering,
+    'star-enlarged': hovering,
+  }
+}
 
 const statusLabel = computed(() => {
   const g = props.game
@@ -137,6 +150,10 @@ const statusColor = computed(() => {
   right: 4px;
   z-index: 1;
 }
+.team-col {
+  min-width: 80px;
+  cursor: pointer;
+}
 .team-logo {
   width: 48px;
   height: 48px;
@@ -146,8 +163,25 @@ const statusColor = computed(() => {
   font-weight: 600;
   font-size: 0.85rem;
 }
-.team-col {
-  min-width: 80px;
+.star-wrapper {
+  height: 20px;
+  margin-bottom: 2px;
+  font-size: 14px;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.star-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.star-enlarged {
+  opacity: 1;
+  transform: scale(1.4);
+}
+.game-card:hover .star-wrapper:not(.star-visible) {
+  opacity: 0.5;
+  transform: scale(1);
 }
 .status-badge {
   font-size: 0.85rem;
