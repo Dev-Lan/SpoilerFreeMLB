@@ -92,9 +92,13 @@ const initialFilter = computed<Filter>(() => {
   return 'completed'
 })
 
-// Set initial once games load
-watch(() => otherGames.value.length, (len) => {
-  if (len > 0) activeFilter.value = initialFilter.value
+// Set initial once games load (only first time)
+let initialized = false
+watch(() => games.value.length, (len) => {
+  if (len > 0 && !initialized) {
+    initialized = true
+    activeFilter.value = initialFilter.value
+  }
 }, { immediate: true })
 
 const filterOptions = computed(() => [
