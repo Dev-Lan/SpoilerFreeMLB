@@ -20,7 +20,12 @@ watch(favorites, (val) => {
 
 const headerColor = computed(() => {
   if (favorites.value.length === 0) return '#333333'
-  return teamColors[favorites.value[0]] ?? '#1a472a'
+  return teamColors[favorites.value[0]]?.primary ?? '#333333'
+})
+
+const accentColor = computed(() => {
+  if (favorites.value.length === 0) return '#555555'
+  return teamColors[favorites.value[0]]?.secondary ?? '#555555'
 })
 
 export function useFavorites() {
@@ -37,5 +42,5 @@ export function useFavorites() {
     }
   }
 
-  return { favorites, isFavorite, toggleFavorite, headerColor }
+  return { favorites, isFavorite, toggleFavorite, headerColor, accentColor }
 }

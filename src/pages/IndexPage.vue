@@ -24,7 +24,7 @@
           :outline="activeFilter !== opt.value"
           :unelevated="activeFilter === opt.value"
           :style="activeFilter === opt.value
-            ? { backgroundColor: headerColor, color: 'white' }
+            ? { backgroundColor: headerColor, color: 'white', border: '2px solid ' + (favorites.length > 0 ? accentColor : headerColor) }
             : { borderColor: headerColor, color: headerColor }"
           @click="activeFilter = opt.value"
         />
@@ -67,7 +67,7 @@ function gameFilter(g: SanitizedGame): Filter {
 
 const today = formatDate(new Date())
 const { games, loading, error } = useGameStatus(() => today)
-const { favorites, isFavorite, headerColor } = useFavorites()
+const { favorites, isFavorite, headerColor, accentColor } = useFavorites()
 
 const otherGames = computed(() =>
   games.value.filter(

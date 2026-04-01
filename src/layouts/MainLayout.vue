@@ -6,6 +6,7 @@
           MLB (Spoiler Free)
         </q-toolbar-title>
       </q-toolbar>
+      <div v-if="favorites.length > 0" class="accent-stripe" :style="{ backgroundColor: accentColor }" />
     </q-header>
 
     <q-page-container>
@@ -17,5 +18,12 @@
 <script setup lang="ts">
 import { useFavorites } from "../composables/useFavorites";
 
-const { headerColor } = useFavorites();
+const { favorites, headerColor, accentColor } = useFavorites();
 </script>
+
+<style scoped>
+.accent-stripe {
+  height: 4px;
+  width: 100%;
+}
+</style>
