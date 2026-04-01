@@ -1,6 +1,8 @@
 import type { SanitizedGame, Team } from './types'
+import { mockDailyGames, mockTeamSchedule } from './mockData'
 
 const API_BASE = 'https://statsapi.mlb.com/api/v1'
+const USE_MOCK = import.meta.env.VITE_MOCK === 'true'
 
 function sanitizeGame(game: any): SanitizedGame {
   return {
@@ -38,6 +40,8 @@ function sanitizeGame(game: any): SanitizedGame {
 }
 
 export async function fetchDailySchedule(date: string): Promise<SanitizedGame[]> {
+  if (USE_MOCK) return mockDailyGames
+
   const url = `${API_BASE}/schedule?sportId=1&date=${date}&hydrate=linescore`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`MLB API error: ${res.status}`)
@@ -57,6 +61,8 @@ export async function fetchTeamSchedule(
   startDate: string,
   endDate: string,
 ): Promise<SanitizedGame[]> {
+  if (USE_MOCK) return mockTeamSchedule(teamId, startDate, endDate)
+
   const url = `${API_BASE}/schedule?sportId=1&teamId=${teamId}&startDate=${startDate}&endDate=${endDate}&hydrate=linescore`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`MLB API error: ${res.status}`)
