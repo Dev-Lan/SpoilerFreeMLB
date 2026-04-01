@@ -1,8 +1,7 @@
 <template>
   <q-page padding>
     <!-- Favorites section -->
-    <FavoritesPanel v-if="favorites.length > 0" />
-    <q-separator v-if="favorites.length > 0" class="q-my-lg" />
+    <FavoritesPanel v-if="favorites.length > 0" class="q-mb-lg" />
 
     <!-- Other games -->
     <div v-if="loading" class="text-center q-pa-lg">
