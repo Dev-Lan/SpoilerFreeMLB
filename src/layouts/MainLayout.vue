@@ -3,7 +3,7 @@
     <q-header elevated :style="{ backgroundColor: headerColor }">
       <q-toolbar>
         <q-toolbar-title class="text-weight-bold">
-          Spoiler-Free Baseball
+          MLB (Spoiler Free)
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { useFavorites } from '../composables/useFavorites'
+import { useFavorites } from "../composables/useFavorites";
 
-const { headerColor } = useFavorites()
+const { headerColor } = useFavorites();
 </script>
