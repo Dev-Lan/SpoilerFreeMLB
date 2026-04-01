@@ -114,6 +114,7 @@ const statusLabel = computed(() => {
   if (state === 'Live') {
     if (detail.startsWith('Delayed')) return detail
     if (g.inning) {
+      if (g.inning.current >= 9) return '9th'
       const half = g.inning.isTopInning ? 'Top' : 'Bot'
       return `${half} ${g.inning.ordinal}`
     }
