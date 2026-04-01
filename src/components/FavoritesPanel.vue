@@ -59,17 +59,10 @@ function relativeDate(officialDate: string): string {
   const todayNoon = new Date(todayStr + 'T12:00:00')
   const diffDays = Math.round((target.getTime() - todayNoon.getTime()) / 86_400_000)
 
-  const short = target.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-
   if (diffDays === 0) return 'Today'
   if (diffDays === 1) return 'Tomorrow'
-  if (diffDays === -1) return 'Yesterday'
 
-  const dayName = target.toLocaleDateString(undefined, { weekday: 'short' })
-  if (diffDays >= 2 && diffDays <= 6) return dayName
-  if (diffDays <= -2 && diffDays >= -6) return `Last ${dayName}`
-
-  return short
+  return target.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
 }
 
 function formatDate(d: Date): string {
