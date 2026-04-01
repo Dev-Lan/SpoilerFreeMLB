@@ -6,10 +6,6 @@
           Spoiler-Free Baseball
         </q-toolbar-title>
       </q-toolbar>
-      <q-tabs v-model="tab" align="center" active-color="white" indicator-color="white">
-        <q-route-tab name="games" label="All Games" to="/" exact />
-        <q-route-tab name="favorites" label="My Teams" to="/favorites" />
-      </q-tabs>
     </q-header>
 
     <q-page-container>
@@ -19,9 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useFavorites } from '../composables/useFavorites'
 
-const tab = ref('games')
 const { headerColor } = useFavorites()
 </script>

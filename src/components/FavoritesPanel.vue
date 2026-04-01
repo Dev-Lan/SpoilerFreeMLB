@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div v-if="favorites.length === 0" class="text-center q-pa-lg text-grey-6">
-      No favorite teams yet. Star a team from the All Games tab!
-    </div>
-    <div v-else class="q-gutter-lg">
+    <div class="q-gutter-lg">
       <div v-for="teamId in favorites" :key="teamId" class="favorite-team-section">
         <div class="row items-center q-mb-sm q-gutter-sm">
           <img :src="teamLogoUrl(teamId)" class="fav-team-logo" />
@@ -30,7 +27,7 @@
           >
             <GameCard :game="game" />
             <div class="text-center text-caption text-grey-5 q-mt-xs">
-              {{ idx === 0 ? 'Previous' : idx === 1 ? 'Current' : 'Next' }}
+              {{ relativeDate(game.officialDate) }}
             </div>
           </div>
           <div
@@ -40,7 +37,7 @@
             No games found nearby.
           </div>
         </div>
-        <q-separator class="q-mt-md" />
+        <q-separator v-if="favorites.indexOf(teamId) < favorites.length - 1" class="q-mt-md" />
       </div>
     </div>
   </div>
@@ -59,6 +56,26 @@ const { getTeam } = useTeams()
 
 const teamGames = ref<Record<number, SanitizedGame[]>>({})
 const teamLoading = ref<Record<number, boolean>>({})
+
+function relativeDate(officialDate: string): string {
+  const today = new Date()
+  const todayStr = formatDate(today)
+  const target = new Date(officialDate + 'T12:00:00')
+  const todayNoon = new Date(todayStr + 'T12:00:00')
+  const diffDays = Math.round((target.getTime() - todayNoon.getTime()) / 86_400_000)
+
+  const short = target.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+
+  if (diffDays === 0) return `Today \u00B7 ${short}`
+  if (diffDays === 1) return `Tomorrow \u00B7 ${short}`
+  if (diffDays === -1) return `Yesterday \u00B7 ${short}`
+
+  const dayName = target.toLocaleDateString(undefined, { weekday: 'short' })
+  if (diffDays >= 2 && diffDays <= 6) return `${dayName} \u00B7 ${short}`
+  if (diffDays <= -2 && diffDays >= -6) return `Last ${dayName} \u00B7 ${short}`
+
+  return short
+}
 
 function formatDate(d: Date): string {
   return d.getFullYear() + '-' +
