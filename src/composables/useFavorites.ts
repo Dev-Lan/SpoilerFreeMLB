@@ -19,7 +19,7 @@ watch(favorites, (val) => {
 }, { deep: true })
 
 const headerColor = computed(() => {
-  if (favorites.value.length === 0) return '#1a472a' // default primary
+  if (favorites.value.length === 0) return '#333333'
   return teamColors[favorites.value[0]] ?? '#1a472a'
 })
 
