@@ -5,7 +5,6 @@
     <q-separator v-if="favorites.length > 0" class="q-my-lg" />
 
     <!-- Other games -->
-    <DatePicker v-model="selectedDate" class="q-mb-lg" />
     <div v-if="loading" class="text-center q-pa-lg">
       <q-spinner color="primary" size="3em" />
     </div>
@@ -13,7 +12,7 @@
       {{ error }}
     </div>
     <div v-else-if="games.length === 0" class="text-center q-pa-lg text-grey-8">
-      No games scheduled for this date.
+      No games scheduled for today.
     </div>
     <div v-else-if="otherGames.length > 0" class="row justify-center q-gutter-md">
       <GameCard
@@ -26,8 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import DatePicker from '../components/DatePicker.vue'
+import { computed } from 'vue'
 import GameCard from '../components/GameCard.vue'
 import FavoritesPanel from '../components/FavoritesPanel.vue'
 import { useGameStatus } from '../composables/useGameStatus'
@@ -39,9 +37,8 @@ function formatDate(d: Date): string {
     String(d.getDate()).padStart(2, '0')
 }
 
-const selectedDate = ref(formatDate(new Date()))
-const dateGetter = computed(() => selectedDate.value)
-const { games, loading, error } = useGameStatus(() => dateGetter.value)
+const today = formatDate(new Date())
+const { games, loading, error } = useGameStatus(() => today)
 const { favorites, isFavorite } = useFavorites()
 
 const otherGames = computed(() => {
