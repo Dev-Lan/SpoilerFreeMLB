@@ -57,13 +57,13 @@ function relativeDate(officialDate: string): string {
 
   const short = target.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 
-  if (diffDays === 0) return `Today \u00B7 ${short}`
-  if (diffDays === 1) return `Tomorrow \u00B7 ${short}`
-  if (diffDays === -1) return `Yesterday \u00B7 ${short}`
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Tomorrow'
+  if (diffDays === -1) return 'Yesterday'
 
   const dayName = target.toLocaleDateString(undefined, { weekday: 'short' })
-  if (diffDays >= 2 && diffDays <= 6) return `${dayName} \u00B7 ${short}`
-  if (diffDays <= -2 && diffDays >= -6) return `Last ${dayName} \u00B7 ${short}`
+  if (diffDays >= 2 && diffDays <= 6) return dayName
+  if (diffDays <= -2 && diffDays >= -6) return `Last ${dayName}`
 
   return short
 }
