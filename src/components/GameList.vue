@@ -6,7 +6,7 @@
     <div v-else-if="error" class="text-center q-pa-lg text-negative">
       {{ error }}
     </div>
-    <div v-else-if="games.length === 0" class="text-center q-pa-lg text-grey-6">
+    <div v-else-if="games.length === 0" class="text-center q-pa-lg text-grey-8">
       No games scheduled for this date.
     </div>
     <div v-else class="row justify-center q-gutter-md">

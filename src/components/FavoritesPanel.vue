@@ -19,23 +19,14 @@
         <div v-if="teamLoading[teamId]" class="text-center q-pa-sm">
           <q-spinner size="2em" />
         </div>
-        <div v-else class="row justify-center q-gutter-sm">
-          <div
-            v-for="(game, idx) in teamGames[teamId] ?? []"
-            :key="game.gamePk"
-            :class="{ 'current-game': idx === 1 }"
-          >
-            <GameCard :game="game" />
-            <div class="text-center text-caption text-grey-5 q-mt-xs">
-              {{ relativeDate(game.officialDate) }}
-            </div>
+        <div v-else-if="teamGames[teamId]?.length">
+          <GameCard :game="teamGames[teamId][0]" />
+          <div class="text-center text-caption text-grey-8 q-mt-xs">
+            {{ relativeDate(teamGames[teamId][0].officialDate) }}
           </div>
-          <div
-            v-if="(teamGames[teamId] ?? []).length === 0"
-            class="text-grey-6 q-pa-md"
-          >
-            No games found nearby.
-          </div>
+        </div>
+        <div v-else class="text-grey-8 q-pa-md">
+          No upcoming games found.
         </div>
         <q-separator v-if="favorites.indexOf(teamId) < favorites.length - 1" class="q-mt-md" />
       </div>
@@ -87,30 +78,25 @@ async function loadTeamGames(teamId: number) {
   teamLoading.value[teamId] = true
   try {
     const today = new Date()
-    const start = new Date(today)
-    start.setDate(start.getDate() - 7)
+    const todayStr = formatDate(today)
     const end = new Date(today)
-    end.setDate(end.getDate() + 7)
+    end.setDate(end.getDate() + 14)
 
     const allGames = await fetchTeamSchedule(
       teamId,
-      formatDate(start),
+      todayStr,
       formatDate(end),
     )
 
-    const todayStr = formatDate(today)
-
-    // Find the current/today's game (or the nearest future game)
-    let currentIdx = allGames.findIndex((g) => g.officialDate >= todayStr)
-    if (currentIdx < 0) currentIdx = allGames.length - 1
-
-    const slice: SanitizedGame[] = []
-    if (currentIdx > 0) slice.push(allGames[currentIdx - 1])
-    if (currentIdx >= 0 && currentIdx < allGames.length) slice.push(allGames[currentIdx])
-    if (currentIdx + 1 < allGames.length) slice.push(allGames[currentIdx + 1])
-
-    // Pad to 3 entries with current in the middle when possible
-    teamGames.value[teamId] = slice
+    // Today's game takes priority; otherwise show the next future game
+    const todayGame = allGames.find((g) => g.officialDate === todayStr)
+    if (todayGame) {
+      teamGames.value[teamId] = [todayGame]
+    } else if (allGames.length > 0) {
+      teamGames.value[teamId] = [allGames[0]]
+    } else {
+      teamGames.value[teamId] = []
+    }
   } catch (e) {
     console.error(`Failed to load games for team ${teamId}:`, e)
     teamGames.value[teamId] = []

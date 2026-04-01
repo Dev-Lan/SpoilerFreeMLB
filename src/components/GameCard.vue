@@ -8,7 +8,7 @@
           round
           dense
           :icon="isFavorite(game.teams.away.id) ? 'star' : 'star_border'"
-          :color="isFavorite(game.teams.away.id) ? 'amber' : 'grey-5'"
+          :color="isFavorite(game.teams.away.id) ? 'amber' : 'grey-7'"
           size="xs"
           class="q-mb-xs"
           @click.stop="toggleFavorite(game.teams.away.id)"
@@ -41,7 +41,7 @@
           round
           dense
           :icon="isFavorite(game.teams.home.id) ? 'star' : 'star_border'"
-          :color="isFavorite(game.teams.home.id) ? 'amber' : 'grey-5'"
+          :color="isFavorite(game.teams.home.id) ? 'amber' : 'grey-7'"
           size="xs"
           class="q-mb-xs"
           @click.stop="toggleFavorite(game.teams.home.id)"
@@ -60,7 +60,7 @@
     </q-card-section>
 
     <q-card-section v-if="game.venue" class="q-pt-none text-center">
-      <div class="text-caption text-grey-6">{{ game.venue }}</div>
+      <div class="text-caption text-grey-8">{{ game.venue }}</div>
     </q-card-section>
   </q-card>
 </template>
