@@ -1,4 +1,5 @@
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { teamColors } from '../api/teamColors'
 
 const STORAGE_KEY = 'sfb-favorite-teams'
 
@@ -17,6 +18,11 @@ watch(favorites, (val) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
 }, { deep: true })
 
+const headerColor = computed(() => {
+  if (favorites.value.length === 0) return '#1a472a' // default primary
+  return teamColors[favorites.value[0]] ?? '#1a472a'
+})
+
 export function useFavorites() {
   function isFavorite(teamId: number): boolean {
     return favorites.value.includes(teamId)
@@ -31,5 +37,5 @@ export function useFavorites() {
     }
   }
 
-  return { favorites, isFavorite, toggleFavorite }
+  return { favorites, isFavorite, toggleFavorite, headerColor }
 }

@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-primary">
+    <q-header elevated :style="{ backgroundColor: headerColor }">
       <q-toolbar>
         <q-toolbar-title class="text-weight-bold">
           Spoiler-Free Baseball
@@ -20,6 +20,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useFavorites } from '../composables/useFavorites'
 
 const tab = ref('games')
+const { headerColor } = useFavorites()
 </script>
