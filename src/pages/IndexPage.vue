@@ -67,17 +67,11 @@ function gameFilter(g: SanitizedGame): Filter {
 
 const today = formatDate(new Date())
 const { games, loading, error } = useGameStatus(() => today)
-const { favorites, isFavorite, headerColor, accentColor } = useFavorites()
-
-const otherGames = computed(() =>
-  games.value.filter(
-    (g) => !isFavorite(g.teams.away.id) && !isFavorite(g.teams.home.id),
-  ),
-)
+const { favorites, headerColor, accentColor } = useFavorites()
 
 const counts = computed(() => {
   const c = { 'in progress': 0, upcoming: 0, completed: 0 }
-  for (const g of otherGames.value) {
+  for (const g of games.value) {
     c[gameFilter(g)]++
   }
   return c
@@ -108,6 +102,6 @@ const filterOptions = computed(() => [
 ])
 
 const filteredGames = computed(() =>
-  otherGames.value.filter((g) => gameFilter(g) === activeFilter.value),
+  games.value.filter((g) => gameFilter(g) === activeFilter.value),
 )
 </script>
